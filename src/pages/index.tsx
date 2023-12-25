@@ -20,7 +20,7 @@ export default function Home() {
 
         <p className={styles.description}>
          <Link href="/profile">
-          <a>Click To See My Profile</a>
+          Click To See My Profile
         </Link>
         </p>
 

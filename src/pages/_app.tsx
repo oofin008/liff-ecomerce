@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useState, useEffect } from "react";
 
-const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID ?? "";
+const LIFF_ID = process.env.LIFF_ID ?? "";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [liffObject, setLiffObject] = useState(null);
