@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useState, useEffect } from "react";
 
-const LIFF_ID = process.env.LIFF_ID ?? "";
+const LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID ?? "";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [liffObject, setLiffObject] = useState(null);
@@ -10,11 +10,16 @@ export default function App({ Component, pageProps }: AppProps) {
 
   // Execute liff.init() when the app is initialized
   useEffect(() => {
-    ( async () => {
+    (async () => {
+      console.log('env :', LIFF_ID);
       console.log("start liff.init()...");
       const liff = (await import('@line/liff')).default
       try {
         await liff.init({ liffId: LIFF_ID });
+        console.log("liff.init() done");
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        }
       } catch (error: any) {
         console.error('liff init error', error.message);
         if (!process.env.liffId) {
@@ -23,10 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
           );
         }
         setLiffError(error.toString());
-      }
-      console.log("liff.init() done");
-      if (!liff.isLoggedIn()) {
-        liff.login();
       }
     })();
   }, []);
