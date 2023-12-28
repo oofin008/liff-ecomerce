@@ -1,10 +1,11 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useState, useEffect } from "react";
+import { appWithTranslation } from 'next-i18next';
 
 const LIFF_ID = process.env.LIFF_ID ?? "";
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const [liffObject, setLiffObject] = useState(null);
   const [liffError, setLiffError] = useState(null);
 
@@ -38,3 +39,5 @@ export default function App({ Component, pageProps }: AppProps) {
   pageProps.liffError = liffError;
   return <Component {...pageProps} />
 }
+
+export default appWithTranslation(App);

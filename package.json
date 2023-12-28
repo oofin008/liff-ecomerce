@@ -12,8 +12,10 @@
     "@liff/liff-types": "^2.23.0",
     "@line/liff": "^2.23.0",
     "next": "14.0.4",
+    "next-i18next": "^15.1.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-i18next": "^14.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

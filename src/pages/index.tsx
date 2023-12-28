@@ -1,11 +1,54 @@
+import type { GetStaticProps, InferGetStaticPropsType } from 'next'
 import { Inter } from 'next/font/google'
 import Head from 'next/head'
 import Link from 'next/link'
 import styles from '@/styles/Home.module.css';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+type Props = {
+  // Add custom props here
+}
+
+async function getMessages(locale?: string) {
+  return await import(`../../public/locales/${locale}/common.json`);
+}
+
+export default function Home(
+  // _props: InferGetStaticPropsType<typeof getStaticProps>
+) {
+  const [currentLang, setLang] = useState("");
+  const router = useRouter();
+  const { t, i18n } = useTranslation('common');
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onToggleLanguageClick = (newLocale: string) => {
+    const { pathname, asPath, query } = router
+    router.push({ pathname, query }, asPath, { locale: newLocale })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const clientSideLanguageChange = (newLocale: string) => {
+    // i18n.changeLanguage(newLocale);
+  }
+
+  const onClickLogLang = () => {
+    console.log('current locale:', router.locale);
+  }
+
+  useEffect(() => {
+    (async () => {
+      const msg = await getMessages(router.locale);
+      console.log('msg: ', msg);
+      setLang(msg["current_language"])
+    })();
+  }, []);
+
+  console.log('current lang: ', router.locale);
   return (
     <div className={styles.container}>
       <Head>
@@ -19,39 +62,27 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-         <Link href="/profile">
-          Click To See My Profile
-        </Link>
+          <Link href="/profile">
+            Click To See My Profile
+          </Link>
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          <p className={styles.card}>{t('current_language', { language: router.locale })}</p>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          <p className={styles.card}>{currentLang}</p>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+          <Link href="/" locale={router.locale == "en" ? "th" : "en"} className={styles.card}>
+            Switch to {router.locale == "en" ? "Thai" : "English"}
+          </Link>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <button className={styles.card} onClick={onClickLogLang}>
+            Log current Locale
+          </button>
+
+          <button className={styles.card} onClick={() => onToggleLanguageClick("th")}>
+            server Toggle
+          </button>
         </div>
       </main>
 
@@ -68,3 +99,14 @@ export default function Home() {
     </div>
   )
 }
+
+// or getServerSideProps: GetServerSideProps<Props> = async ({ locale })
+// export const getStaticProps: GetStaticProps<Props> = async ({
+//   locale,
+// }) => ({
+//   props: {
+//     ...(await serverSideTranslations(locale ?? 'en', [
+//       'common',
+//     ])),
+//   },
+// })
